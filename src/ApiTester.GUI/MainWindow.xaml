@@ -3,10 +3,106 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:ApiTester.Logic.Services.RequestSender.Models;assembly=ApiTester.Logic"
         xmlns:local="clr-namespace:ApiTester.GUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type models:ResponseModel}">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding StatusCode}"
+                               FontWeight="Bold" />
+                    <TextBlock Text="{Binding Duration, StringFormat=g}" 
+                               Margin="5,0,0,0"
+                               Foreground="Gray"
+                               FontSize="10"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid>
+        <StackPanel Margin="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="Send Request"
+                    Padding="15"
+                    Margin="10"
+                    Command="{Binding SendRequest}"></Button>
 
+                <Grid Grid.Column="1" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Margin="10 5 10 0"
+                               Text="Method:"></TextBlock>
+                    <ComboBox Grid.Row="1"
+                              SelectedItem="{Binding HttpMethod}"
+                              ItemsSource="{Binding HttpMethodValues}"
+                              Margin="10"
+                              Height="25"></ComboBox>
+                </Grid>
+
+                <Grid Grid.Column="2" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Margin="10 5 10 0"
+                               Text="Api Url:"></TextBlock>
+                    <TextBox Grid.Row="1"
+                             Text="{Binding ApiUrl}"
+                             HorizontalAlignment="Stretch"
+                             Height="25"></TextBox>
+                </Grid>
+            </Grid>
+
+            <StackPanel Margin="10 0 10 0">
+                <TextBlock Margin="20 5 20 0"
+                           Text="Authentication:"></TextBlock>
+                <ComboBox SelectedItem="{Binding AuthenticationType}"
+                          ItemsSource="{Binding AuthenticationTypeValues}"
+                          Margin="10"></ComboBox>
+                <TextBox Text="{Binding BearerToken}"
+                         VerticalScrollBarVisibility="Auto"
+                         TextWrapping="Wrap"
+                         Margin="10 0 10 0"
+                         Height="50"></TextBox>
+            </StackPanel>
+
+            <StackPanel Margin="10 0 10 0">
+                <TextBlock Margin="20 5 20 0"
+                           Text="Body:"></TextBlock>
+                <TextBox Text="{Binding RequestBody}"
+                         Margin="10 0 10 0"
+                         VerticalScrollBarVisibility="Auto"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Height="50"></TextBox>
+            </StackPanel>
+
+            <TextBlock Margin="20 5 20 0"
+                       Text="Responses:"></TextBlock>
+            <ScrollViewer VerticalScrollBarVisibility="Visible">
+                <ItemsControl ItemsSource="{Binding Responses}"
+                          Margin="20 0 20 0"
+                              Height="200">
+                </ItemsControl>
+            </ScrollViewer>
+            
+
+        </StackPanel>
     </Grid>
 </Window>
