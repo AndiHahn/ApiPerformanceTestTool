@@ -13,17 +13,15 @@ namespace ApiTester.GUI.ViewModels
     public class MainViewModel : ViewModel
     {
         private readonly IRequestSender requestSender;
-        private int statusCode;
-        private TimeSpan timeSpan;
-        private AuthenticationType authenticationType;
-        private HttpMethod httpMethod;
-        private ObservableCollection<ResponseModel> responses;
 
         public ICommand SendRequest { get; private set; }
 
-        public string ApiUrl { get; set; }
-        public string BearerToken { get; set; }
-        public AuthenticationType AuthenticationType { get; set; }
+        public string ApiUrl { get; set; } = "https://localhost:5001/api/bill?accountIds=1";
+        public string BearerToken { get; set; } = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE1OTg5NzQwMjUsImV4cCI6MTU5OTA2MDQyNSwiaWF0IjoxNTk4OTc0MDI1fQ.MbD-YDN5yHsbYHxkx6ZjHK-jwejSDx7GC6i2aVcLIY4";
+        public int NrOfRequestsToSend { get; set; } = 100;
+        public int RequestsPerSecond { get; set; } = 50;
+
+        public AuthenticationType AuthenticationType { get; set; } = AuthenticationType.BearerToken;
         public HttpMethod HttpMethod { get; set; }
 
         public IEnumerable<AuthenticationType> AuthenticationTypeValues
@@ -42,17 +40,12 @@ namespace ApiTester.GUI.ViewModels
             }
         }
 
-        public ObservableCollection<ResponseModel> Responses
-        {
-            get => responses; set
-            {
-                this.Set(ref responses, value);
-            }
-        }
+        public ResponseViewModel ResponseViewModel { get; set; }
 
         public MainViewModel(IRequestSender requestSender)
         {
             this.requestSender = requestSender ?? throw new ArgumentNullException(nameof(requestSender));
+            ResponseViewModel = new ResponseViewModel();
 
             BindCommands();
         }
@@ -76,8 +69,8 @@ namespace ApiTester.GUI.ViewModels
                     JsonBody = string.Empty
                 };
 
-                var result = await requestSender.SendRequestsAsync(requestModel, 1000, 1000);
-                Responses = new ObservableCollection<ResponseModel>(result);
+                var result = await requestSender.SendRequestsAsync(requestModel, NrOfRequestsToSend, RequestsPerSecond);
+                ResponseViewModel.Responses = new ObservableCollection<ResponseModel>(result);
             }
             catch (Exception ex)
             {

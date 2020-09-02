@@ -21,24 +21,42 @@ namespace ApiTester.Logic.Services.RequestSender
 
         public async Task<ResponseModel> SendRequestAsync(RequestModel requestModel)
         {
-            var httpClient = httpClientFactory.CreateClient();
-
-            Stopwatch stopwatch = new Stopwatch();
-            HttpRequestMessage request = new HttpRequestMessage(
-                                                TransformHttpMethod(requestModel.HttpMethod),
-                                                requestModel.Url);
-            TryAddAuthenticationToRequest(requestModel, request);
-            TryAddContentToRequest(requestModel, request);
-
-            stopwatch.Start();
-            var response = await httpClient.SendAsync(request);
-            stopwatch.Stop();
-
-            return new ResponseModel()
+            DateTime startTime = DateTime.Now;
+            try
             {
-                StatusCode = response.StatusCode,
-                Duration = stopwatch.Elapsed
-            };
+                var httpClient = httpClientFactory.CreateClient();
+
+                Stopwatch stopwatch = new Stopwatch();
+                HttpRequestMessage request = new HttpRequestMessage(
+                                                    TransformHttpMethod(requestModel.HttpMethod),
+                                                    requestModel.Url);
+                TryAddAuthenticationToRequest(requestModel, request);
+                TryAddContentToRequest(requestModel, request);
+
+                startTime = DateTime.Now;
+                stopwatch.Start();
+                var response = await httpClient.SendAsync(request);
+                stopwatch.Stop();
+                DateTime endTime = DateTime.Now;
+
+                return new ResponseModel()
+                {
+                    StatusCode = response.StatusCode,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Duration = stopwatch.Elapsed
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel()
+                {
+                    StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
+                    StartTime = startTime,
+                    EndTime = DateTime.Now,
+                    ExceptionMessage = ex.Message
+                };
+            }
         }
 
         private System.Net.Http.HttpMethod TransformHttpMethod(Models.HttpMethod httpMethod)
