@@ -19,7 +19,7 @@ namespace ApiTester.GUI.ViewModels
 
         public ICommand SendRequest { get; private set; }
 
-        public string ApiUrl { get; set; } = "https://localhost:5001/api/bill?accountIds=1";
+        public string ApiUrl { get; set; }
         public string BearerToken { get; set; }
         public int NrOfRequestsToSend { get; set; } = 100;
         public int RequestsPerSecond { get; set; } = 50;
