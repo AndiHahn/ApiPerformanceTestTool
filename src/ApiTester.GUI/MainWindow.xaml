@@ -6,104 +6,123 @@
         xmlns:models="clr-namespace:ApiTester.Logic.Services.RequestSender.Models;assembly=ApiTester.Logic"
         xmlns:control="clr-namespace:ApiTester.GUI.Controls"
         xmlns:local="clr-namespace:ApiTester.GUI"
+        xmlns:authviewmodels="clr-namespace:ApiTester.GUI.ViewModels.Authentication"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Title="MainWindow" Height="670" Width="800">
 
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type authviewmodels:AuthNoneViewModel}">
+            <control:AuthNoneViewControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type authviewmodels:AuthBearerViewModel}">
+            <control:AuthBearerViewControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type authviewmodels:AuthBasicViewModel}">
+            <control:AuthBasicViewControl/>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
         <StackPanel Margin="20">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="4*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="Send Request"
-                    Padding="15"
-                    Margin="10"
-                    Command="{Binding SendRequest}"></Button>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Send"
+                        Padding="15"
+                        Margin="10"
+                        Command="{Binding SendRequest}"></Button>
 
-                <Grid Grid.Column="1" Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Margin="10 5 10 0"
-                               Text="Method:"></TextBlock>
-                    <ComboBox Grid.Row="1"
-                              SelectedItem="{Binding HttpMethod}"
-                              ItemsSource="{Binding HttpMethodValues}"
-                              Margin="10"
-                              Height="25"></ComboBox>
+                    <Grid Grid.Column="1" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Margin="10 5 10 0"
+                                   Text="Method:"></TextBlock>
+                        <ComboBox Grid.Row="1"
+                                  SelectedItem="{Binding HttpMethod}"
+                                  ItemsSource="{Binding HttpMethodValues}"
+                                  Margin="10"
+                                  Height="25"></ComboBox>
+                    </Grid>
+
+                    <Grid Grid.Column="2" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Text="Nr of Requests:"></TextBlock>
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding NrOfRequestsToSend}"
+                                 HorizontalAlignment="Stretch"
+                                 Height="20"></TextBox>
+                        <TextBlock Grid.Row="2"
+                                   Text="Requests / s:"></TextBlock>
+                        <TextBox Grid.Row="3"
+                                 Text="{Binding RequestsPerSecond}"
+                                 HorizontalAlignment="Stretch"
+                                 Height="20"></TextBox>
+                    </Grid>
+
+                    <Grid Grid.Column="3" Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Margin="10 5 10 5"
+                                   Text="Api Url:"></TextBlock>
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding ApiUrl}"
+                                 TextWrapping="Wrap"
+                                 HorizontalAlignment="Stretch"
+                                 Height="50"></TextBox>
+                    </Grid>
                 </Grid>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Padding="0 0 0 5">
+                <StackPanel Margin="10 0 10 0">
+                    <TextBlock Margin="20 5 20 0"
+                               Text="Authentication:"></TextBlock>
+                    <ComboBox SelectedItem="{Binding AuthenticationType}"
+                              ItemsSource="{Binding AuthenticationTypeValues}"
+                              Margin="10"></ComboBox>
+                    <ContentControl Content="{Binding AuthenticationViewModel}"/>
+                </StackPanel>
+            </Border>
 
-                <Grid Grid.Column="2" Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Text="Nr of Requests:"></TextBlock>
-                    <TextBox Grid.Row="1"
-                             Text="{Binding NrOfRequestsToSend}"
-                             HorizontalAlignment="Stretch"
-                             Height="20"></TextBox>
-                    <TextBlock Grid.Row="2"
-                               Text="Requests / s:"></TextBlock>
-                    <TextBox Grid.Row="3"
-                             Text="{Binding RequestsPerSecond}"
-                             HorizontalAlignment="Stretch"
-                             Height="20"></TextBox>
-                </Grid>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Padding="0 0 0 5">
+                <StackPanel Margin="10 0 10 0">
+                    <TextBlock Margin="20 5 20 0"
+                               Text="Body:"></TextBlock>
+                    <TextBox Text="{Binding RequestBody}"
+                             Margin="10 0 10 0"
+                             VerticalScrollBarVisibility="Auto"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             TextWrapping="Wrap"
+                             Height="50"></TextBox>
+                </StackPanel>
+            </Border>
 
-                <Grid Grid.Column="3" Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Margin="10 5 10 0"
-                               Text="Api Url:"></TextBlock>
-                    <TextBox Grid.Row="1"
-                             Text="{Binding ApiUrl}"
-                             HorizontalAlignment="Stretch"
-                             Height="25"></TextBox>
-                </Grid>
-            </Grid>
-
-            <StackPanel Margin="10 0 10 0">
-                <TextBlock Margin="20 5 20 0"
-                           Text="Authentication:"></TextBlock>
-                <ComboBox SelectedItem="{Binding AuthenticationType}"
-                          ItemsSource="{Binding AuthenticationTypeValues}"
-                          Margin="10"></ComboBox>
-                <TextBox Text="{Binding BearerToken}"
-                         VerticalScrollBarVisibility="Auto"
-                         TextWrapping="Wrap"
-                         Margin="10 0 10 0"
-                         Height="50"></TextBox>
-            </StackPanel>
-
-            <StackPanel Margin="10 0 10 0">
-                <TextBlock Margin="20 5 20 0"
-                           Text="Body:"></TextBlock>
-                <TextBox Text="{Binding RequestBody}"
-                         Margin="10 0 10 0"
-                         VerticalScrollBarVisibility="Auto"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         Height="50"></TextBox>
-            </StackPanel>
-
-            <control:ResponseViewControl
-                DataContext="{Binding ResponseViewModel}"
-                Margin="20 0 20 0"/>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="0 0 0 5" Padding="0 0 0 5">
+                <control:ResponseViewControl
+                    DataContext="{Binding ResponseViewModel}"
+                    Margin="20 0 20 0"/>
+            </Border>
 
         </StackPanel>
     </Grid>

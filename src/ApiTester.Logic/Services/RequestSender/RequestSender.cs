@@ -30,7 +30,7 @@ namespace ApiTester.Logic.Services.RequestSender
                 HttpRequestMessage request = new HttpRequestMessage(
                                                     TransformHttpMethod(requestModel.HttpMethod),
                                                     requestModel.Url);
-                TryAddAuthenticationToRequest(requestModel, request);
+                TryAddAuthenticationToRequest(requestModel.Authentication, request);
                 TryAddContentToRequest(requestModel, request);
 
                 startTime = DateTime.Now;
@@ -61,19 +61,14 @@ namespace ApiTester.Logic.Services.RequestSender
 
         private System.Net.Http.HttpMethod TransformHttpMethod(Models.HttpMethod httpMethod)
         {
-            switch (httpMethod)
+            return httpMethod switch
             {
-                case Models.HttpMethod.Get:
-                    return System.Net.Http.HttpMethod.Get;
-                case Models.HttpMethod.Post:
-                    return System.Net.Http.HttpMethod.Post;
-                case Models.HttpMethod.Put:
-                    return System.Net.Http.HttpMethod.Put;
-                case Models.HttpMethod.Patch:
-                    return System.Net.Http.HttpMethod.Patch;
-                default:
-                    throw new ArgumentException($"Httpmethod {httpMethod} not allowed.");
-            }
+                Models.HttpMethod.Get => System.Net.Http.HttpMethod.Get,
+                Models.HttpMethod.Post => System.Net.Http.HttpMethod.Post,
+                Models.HttpMethod.Put => System.Net.Http.HttpMethod.Put,
+                Models.HttpMethod.Patch => System.Net.Http.HttpMethod.Patch,
+                _ => throw new ArgumentException($"Httpmethod {httpMethod} not allowed."),
+            };
         }
 
         public async Task<IEnumerable<ResponseModel>> SendRequestsAsync(RequestModel requestModel, int count, int perSecond)
@@ -95,12 +90,19 @@ namespace ApiTester.Logic.Services.RequestSender
             return result;
         }
 
-        private void TryAddAuthenticationToRequest(RequestModel requestModel, HttpRequestMessage request)
+        private void TryAddAuthenticationToRequest(AuthenticationModel authentication, HttpRequestMessage request)
         {
-            if (requestModel.AuthenticationType == AuthenticationType.BearerToken)
+            if (authentication.AuthenticationType == AuthenticationType.BearerToken)
             {
                 request.Headers.Authorization =
-                        new AuthenticationHeaderValue("Bearer", requestModel.BearerToken);
+                        new AuthenticationHeaderValue("Bearer", authentication.BearerToken);
+            }
+            else if (authentication.AuthenticationType == AuthenticationType.Basic)
+            {
+                string credentials = authentication.Username + ":" + authentication.Password;
+                var base64Credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(credentials));
+                request.Headers.Authorization =
+                        new AuthenticationHeaderValue("Basic", base64Credentials);
             }
         }
 

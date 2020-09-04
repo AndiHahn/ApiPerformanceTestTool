@@ -3,6 +3,7 @@
     public enum AuthenticationType
     {
         None,
-        BearerToken
+        BearerToken,
+        Basic
     }
 }
